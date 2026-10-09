@@ -53,8 +53,7 @@ Future<void> tapText(WidgetTester tester, String text, {Type? of, bool last = fa
   final finder = of == null ? find.text(text) : find.widgetWithText(of, text);
   expect(finder, findsAtLeastNWidgets(1), reason: '"$text" should be tappable');
   final target = last ? finder.last : finder.first;
-  await tester.ensureVisible(target);
-  await tester.pump();
+  await revealIfNeeded(tester, target);
   await tester.tap(target);
   await settle(tester);
 }
@@ -63,8 +62,7 @@ Future<void> tapTooltip(WidgetTester tester, String tooltip, {bool last = false}
   final finder = find.byTooltip(tooltip);
   expect(finder, findsAtLeastNWidgets(1), reason: 'tooltip "$tooltip" should exist');
   final target = last ? finder.last : finder.first;
-  await tester.ensureVisible(target);
-  await tester.pump();
+  await revealIfNeeded(tester, target);
   await tester.tap(target);
   await settle(tester);
 }
@@ -90,8 +88,19 @@ Future<void> createGroupWithMembers(WidgetTester tester, String name, List<Strin
 /// Scrolls [finder] into view and taps it.
 Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   expect(finder, findsOneWidget);
-  await tester.ensureVisible(finder);
-  await tester.pump();
+  await revealIfNeeded(tester, finder);
   await tester.tap(finder);
   await settle(tester);
+}
+
+/// Scrolls [finder] into view only when it is outside the window. Unlike
+/// `WidgetTester.ensureVisible`, this never moves content that is already
+/// visible, so page titles are not scrolled out (and unmounted).
+Future<void> revealIfNeeded(WidgetTester tester, Finder finder) async {
+  final rect = tester.getRect(finder);
+  final size = tester.view.physicalSize / tester.view.devicePixelRatio;
+  final visible = rect.top >= 0 && rect.bottom <= size.height && rect.left >= 0 && rect.right <= size.width;
+  if (visible) return;
+  await Scrollable.ensureVisible(tester.element(finder), alignment: 0.5);
+  await tester.pump();
 }

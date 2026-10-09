@@ -146,7 +146,18 @@ class _GroupBody extends ConsumerWidget {
               FsListCard(
                 children: [for (final m in snapshot.members) _MemberRow(snapshot: snapshot, member: m)],
               ),
-            const SectionHeader('Expenses'),
+            SectionHeader(
+              'Expenses',
+              trailing: TextButton.icon(
+                onPressed: () => context.navigateTo(Routes.recurring(g.id)),
+                icon: const Icon(Icons.event_repeat_rounded, size: 18),
+                label: Text(
+                  snapshot.templates.isEmpty
+                      ? 'Recurring'
+                      : 'Recurring (${snapshot.templates.where((t) => t.isActive).length})',
+                ),
+              ),
+            ),
             if (snapshot.expenses.isEmpty)
               Card(
                 child: EmptyState(
