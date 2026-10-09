@@ -124,7 +124,14 @@ class _Brand extends StatelessWidget {
       children: [
         mark,
         const SizedBox(width: FsSpace.md),
-        Text('FairShare', style: context.text.titleMedium?.copyWith(letterSpacing: -0.3)),
+        Flexible(
+          child: Text(
+            'FairShare',
+            style: context.text.titleMedium?.copyWith(letterSpacing: -0.3),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }

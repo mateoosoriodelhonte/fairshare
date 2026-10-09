@@ -51,7 +51,15 @@ class InsightsPanel extends StatelessWidget {
               Row(
                 children: [
                   Expanded(child: Text('Last 6 months', style: context.text.titleSmall)),
-                  Text('This month ${i.thisMonth.format()}', style: context.text.bodySmall?.tabular),
+                  Flexible(
+                    child: Text(
+                      'This month ${i.thisMonth.format()}',
+                      style: context.text.bodySmall?.tabular,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: FsSpace.lg),

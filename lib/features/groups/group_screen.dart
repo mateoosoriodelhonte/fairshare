@@ -229,27 +229,47 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final b = snapshot.balances;
     final outstanding = Money.sum(b.creditors.map((c) => c.balance), b.currency);
+    final canSettle = snapshot.members.length >= 2;
+    final settleButton = FilledButton.tonal(
+      onPressed: () => context.navigateTo(Routes.settle(snapshot.group.id)),
+      child: const Text('Settle up'),
+    );
+    final stats = Row(
+      children: [
+        Expanded(
+          child: _Stat(label: 'Total spent', money: b.totalSpent),
+        ),
+        Container(width: 1, height: 40, color: context.palette.hairline),
+        const SizedBox(width: FsSpace.lg),
+        Expanded(
+          child: _Stat(
+            label: 'Outstanding',
+            money: outstanding,
+            caption: outstanding.isZero ? 'Everyone is settled' : 'Across all members',
+          ),
+        ),
+      ],
+    );
     return FsCard(
-      child: Row(
-        children: [
-          Expanded(
-            child: _Stat(label: 'Total spent', money: b.totalSpent),
-          ),
-          Container(width: 1, height: 40, color: context.palette.hairline),
-          const SizedBox(width: FsSpace.lg),
-          Expanded(
-            child: _Stat(
-              label: 'Outstanding',
-              money: outstanding,
-              caption: outstanding.isZero ? 'Everyone is settled' : 'Across all members',
-            ),
-          ),
-          if (snapshot.members.length >= 2)
-            FilledButton.tonal(
-              onPressed: () => context.navigateTo(Routes.settle(snapshot.group.id)),
-              child: const Text('Settle up'),
-            ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Narrow cards (phones, large text) stack the action under the stats.
+          if (constraints.maxWidth < 440) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                stats,
+                if (canSettle) ...[const SizedBox(height: FsSpace.md), settleButton],
+              ],
+            );
+          }
+          return Row(
+            children: [
+              Expanded(child: stats),
+              if (canSettle) ...[const SizedBox(width: FsSpace.md), settleButton],
+            ],
+          );
+        },
       ),
     );
   }
@@ -300,7 +320,12 @@ class _MemberRow extends ConsumerWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MoneyText(balance.abs(), colored: !balance.isZero, style: context.text.titleMedium),
+          MoneyText(
+            balance.abs(),
+            style: context.text.titleMedium?.copyWith(
+              color: context.palette.forSign(balance.minorUnits, neutral: context.colors.onSurface),
+            ),
+          ),
           PopupMenuButton<String>(
             tooltip: 'Member options',
             icon: const Icon(Icons.more_vert_rounded, size: 20),

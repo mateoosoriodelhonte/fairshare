@@ -88,6 +88,7 @@ class SettingsScreen extends ConsumerWidget {
             FsListCard(
               children: [
                 SwitchListTile(
+                  isThreeLine: true,
                   value: prefs.autoGenerateRecurring,
                   onChanged: repo.setAutoGenerateRecurring,
                   title: const Text('Create due expenses on launch'),
@@ -99,6 +100,7 @@ class SettingsScreen extends ConsumerWidget {
             FsListCard(
               children: [
                 ListTile(
+                  isThreeLine: true,
                   leading: const Icon(Icons.file_open_outlined),
                   title: const Text('Import a group from JSON'),
                   subtitle: const Text(
@@ -108,6 +110,7 @@ class SettingsScreen extends ConsumerWidget {
                   onTap: () => importGroupFromFile(context, ref),
                 ),
                 ListTile(
+                  isThreeLine: true,
                   leading: const Icon(Icons.auto_awesome_rounded),
                   title: const Text('Create demo group'),
                   subtitle: const Text(
@@ -117,6 +120,7 @@ class SettingsScreen extends ConsumerWidget {
                   onTap: () => createDemoGroup(context, ref),
                 ),
                 const ListTile(
+                  isThreeLine: true,
                   leading: Icon(Icons.lock_outline_rounded),
                   title: Text('Everything stays on this device'),
                   subtitle: Text(
@@ -129,6 +133,7 @@ class SettingsScreen extends ConsumerWidget {
             FsListCard(
               children: [
                 const ListTile(
+                  isThreeLine: true,
                   leading: BrandMark(size: 26),
                   title: Text('FairShare $appVersion'),
                   subtitle: Text('Split expenses, not friendships. Offline, no account, no tracking.'),

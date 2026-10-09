@@ -104,13 +104,18 @@ class ExpenseTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          MoneyText(expense.amount, style: context.text.titleMedium),
-          if (converted != null) Text('≈ ${converted.format()}', style: context.text.bodySmall?.tabular),
-        ],
+      // ListTile caps trailing height at 56; scale down rather than overflow at large text sizes.
+      trailing: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerRight,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            MoneyText(expense.amount, style: context.text.titleMedium),
+            if (converted != null) Text('≈ ${converted.format()}', style: context.text.bodySmall?.tabular),
+          ],
+        ),
       ),
     );
   }

@@ -46,84 +46,94 @@ class MonthlyBarChart extends StatelessWidget {
     return Semantics(
       label: 'Monthly spending. ${points.map((p) => p.semanticLabel).join('. ')}',
       excludeSemantics: true,
-      child: SizedBox(
-        height: height + 24,
-        child: TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0, end: 1),
-          duration: reduce ? Duration.zero : FsMotion.chart,
-          curve: FsMotion.emphasized,
-          builder: (context, t, _) => Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    if (avg > 0 && max > 0)
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: (avg / max) * height * t,
-                        child: CustomPaint(
-                          painter: _DashedLinePainter(color: palette.hairline),
-                          size: const Size(double.infinity, 1),
-                        ),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: reduce ? Duration.zero : FsMotion.chart,
+        curve: FsMotion.emphasized,
+        builder: (context, t, _) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: height,
+              child: Stack(
+                children: [
+                  if (avg > 0 && max > 0)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: (avg / max) * height * t,
+                      child: CustomPaint(
+                        painter: _DashedLinePainter(color: palette.hairline),
+                        size: const Size(double.infinity, 1),
                       ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        for (final p in points)
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  if (p.value > 0 && p.value == max)
-                                    Padding(
+                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      for (final p in points)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                if (p.value > 0 && p.value == max)
+                                  Flexible(
+                                    child: Padding(
                                       padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                        Money(p.value, currency).format(),
-                                        style: context.text.labelSmall?.tabular.copyWith(
-                                          color: context.colors.onSurface,
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          _compact(Money(p.value, currency)),
+                                          style: context.text.labelSmall?.tabular.copyWith(
+                                            color: context.colors.onSurface,
+                                          ),
+                                          maxLines: 1,
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                  Container(
-                                    height: max == 0 ? 3 : (3 + (height - 24) * (p.value / max) * t),
-                                    decoration: BoxDecoration(
-                                      color: p.value == 0
-                                          ? palette.chartTrack
-                                          : (p.value == max
-                                                ? context.colors.primary
-                                                : context.colors.primary.withValues(alpha: 0.55)),
-                                      borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
-                                    ),
                                   ),
-                                ],
-                              ),
+                                Container(
+                                  height: max == 0 ? 3 : (3 + (height - 34) * (p.value / max) * t),
+                                  decoration: BoxDecoration(
+                                    color: p.value == 0
+                                        ? palette.chartTrack
+                                        : (p.value == max
+                                              ? context.colors.primary
+                                              : context.colors.primary.withValues(alpha: 0.55)),
+                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  for (final p in points)
-                    Expanded(
-                      child: Text(p.label, textAlign: TextAlign.center, style: context.text.labelSmall),
-                    ),
+                        ),
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                for (final p in points)
+                  Expanded(
+                    child: Text(p.label, textAlign: TextAlign.center, style: context.text.labelSmall),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+/// Whole units once the amount is large enough that cents are noise in a
+/// narrow bar column (e.g. `€751` instead of `€751.37`).
+String _compact(Money m) {
+  if (m.currency.decimalDigits == 0 || m.minorUnits.abs() < 100 * m.currency.minorUnitsPerMajor) return m.format();
+  return Money(m.minorUnits - m.minorUnits % m.currency.minorUnitsPerMajor, m.currency).format().split('.').first;
 }
 
 class _DashedLinePainter extends CustomPainter {
