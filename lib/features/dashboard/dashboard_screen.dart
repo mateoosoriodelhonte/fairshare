@@ -8,6 +8,7 @@ import '../../domain/group_snapshot.dart';
 import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
+import '../demo/demo_actions.dart';
 import '../groups/group_editor_sheet.dart';
 import '../io/export_import.dart';
 
@@ -70,10 +71,21 @@ class DashboardScreen extends ConsumerWidget {
                         label: const Text('New group'),
                       ),
                       const SizedBox(height: FsSpace.sm),
-                      TextButton.icon(
-                        onPressed: () => importGroupFromFile(context, ref),
-                        icon: const Icon(Icons.file_open_outlined, size: 18),
-                        label: const Text('Import a group'),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: FsSpace.xs,
+                        children: [
+                          TextButton.icon(
+                            onPressed: () => createDemoGroup(context, ref),
+                            icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+                            label: const Text('Explore with demo data'),
+                          ),
+                          TextButton.icon(
+                            onPressed: () => importGroupFromFile(context, ref),
+                            icon: const Icon(Icons.file_open_outlined, size: 18),
+                            label: const Text('Import a group'),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -169,7 +181,29 @@ class GroupCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(g.name, style: context.text.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            g.name,
+                            style: context.text.titleMedium,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (g.isDemo) ...[
+                          const SizedBox(width: FsSpace.sm),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: context.colors.secondaryContainer,
+                              borderRadius: BorderRadius.circular(FsRadius.sm),
+                            ),
+                            child: Text('DEMO', style: context.text.labelSmall?.copyWith(letterSpacing: 0.6)),
+                          ),
+                        ],
+                      ],
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       '${snapshot.members.length} ${snapshot.members.length == 1 ? 'member' : 'members'} · ${g.baseCurrency.code}',

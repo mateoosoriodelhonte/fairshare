@@ -104,3 +104,11 @@ Future<void> revealIfNeeded(WidgetTester tester, Finder finder) async {
   await Scrollable.ensureVisible(tester.element(finder), alignment: 0.5);
   await tester.pump();
 }
+
+/// Scrolls the page's main scroll view until [finder] is built and visible,
+/// for content in lazily built lists far below the fold.
+Future<void> scrollTo(WidgetTester tester, Finder finder) async {
+  final scrollable = find.descendant(of: find.byType(CustomScrollView), matching: find.byType(Scrollable)).first;
+  await tester.scrollUntilVisible(finder, 200, scrollable: scrollable);
+  await tester.pump();
+}
