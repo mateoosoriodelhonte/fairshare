@@ -7,8 +7,10 @@ import '../../app/router.dart';
 import '../../core/money/money.dart';
 import '../../domain/group_snapshot.dart';
 import '../../domain/models/models.dart';
+import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
+import '../expenses/expense_list.dart';
 import 'group_editor_sheet.dart';
 import 'member_sheets.dart';
 
@@ -60,8 +62,17 @@ class _GroupBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final g = snapshot.group;
+    final canAddExpense = snapshot.members.length >= 2;
     return PageScaffold(
       title: g.name,
+      fab: canAddExpense
+          ? FloatingActionButton.extended(
+              heroTag: null,
+              onPressed: () => context.navigateTo(Routes.newExpense(g.id)),
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('Add expense'),
+            )
+          : null,
       titleWidget: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -136,16 +147,25 @@ class _GroupBody extends ConsumerWidget {
                 children: [for (final m in snapshot.members) _MemberRow(snapshot: snapshot, member: m)],
               ),
             const SectionHeader('Expenses'),
-            Card(
-              child: EmptyState(
-                compact: true,
-                icon: Icons.receipt_long_outlined,
-                title: 'No expenses yet',
-                message: snapshot.members.length < 2
-                    ? 'Add at least two members to start splitting.'
-                    : 'Expenses you record here are split between members.',
-              ),
-            ),
+            if (snapshot.expenses.isEmpty)
+              Card(
+                child: EmptyState(
+                  compact: true,
+                  icon: Icons.receipt_long_outlined,
+                  title: 'No expenses yet',
+                  message: canAddExpense
+                      ? 'Record what someone paid and how it should be split.'
+                      : 'Add at least two members to start splitting.',
+                  action: canAddExpense
+                      ? FilledButton.tonal(
+                          onPressed: () => context.navigateTo(Routes.newExpense(g.id)),
+                          child: const Text('Add expense'),
+                        )
+                      : null,
+                ),
+              )
+            else
+              ExpenseList(snapshot: snapshot),
           ],
         ),
       ],
