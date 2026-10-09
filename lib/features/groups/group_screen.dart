@@ -197,6 +197,11 @@ class _SummaryCard extends StatelessWidget {
               caption: outstanding.isZero ? 'Everyone is settled' : 'Across all members',
             ),
           ),
+          if (snapshot.members.length >= 2)
+            FilledButton.tonal(
+              onPressed: () => context.navigateTo(Routes.settle(snapshot.group.id)),
+              child: const Text('Settle up'),
+            ),
         ],
       ),
     );

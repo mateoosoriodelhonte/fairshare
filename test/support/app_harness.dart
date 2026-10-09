@@ -46,17 +46,26 @@ Future<void> enterInto(WidgetTester tester, String label, String text) async {
   await tester.pump();
 }
 
-Future<void> tapText(WidgetTester tester, String text, {Type? of}) async {
+/// Taps the first (or, with [last], the last) widget matching [text].
+/// Use [last] for buttons inside dialogs and sheets, which sit above the
+/// page in the widget tree.
+Future<void> tapText(WidgetTester tester, String text, {Type? of, bool last = false}) async {
   final finder = of == null ? find.text(text) : find.widgetWithText(of, text);
   expect(finder, findsAtLeastNWidgets(1), reason: '"$text" should be tappable');
-  await tester.tap(finder.first);
+  final target = last ? finder.last : finder.first;
+  await tester.ensureVisible(target);
+  await tester.pump();
+  await tester.tap(target);
   await settle(tester);
 }
 
 Future<void> tapTooltip(WidgetTester tester, String tooltip, {bool last = false}) async {
   final finder = find.byTooltip(tooltip);
   expect(finder, findsAtLeastNWidgets(1), reason: 'tooltip "$tooltip" should exist');
-  await tester.tap(last ? finder.last : finder.first);
+  final target = last ? finder.last : finder.first;
+  await tester.ensureVisible(target);
+  await tester.pump();
+  await tester.tap(target);
   await settle(tester);
 }
 
@@ -76,4 +85,13 @@ Future<void> createGroupWithMembers(WidgetTester tester, String name, List<Strin
     await tapText(tester, 'Add', of: FilledButton);
   }
   expect(pageTitle(name), findsOneWidget);
+}
+
+/// Scrolls [finder] into view and taps it.
+Future<void> tapVisible(WidgetTester tester, Finder finder) async {
+  expect(finder, findsOneWidget);
+  await tester.ensureVisible(finder);
+  await tester.pump();
+  await tester.tap(finder);
+  await settle(tester);
 }
