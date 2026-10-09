@@ -320,7 +320,12 @@ class _MemberRow extends ConsumerWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MoneyText(balance.abs(), colored: !balance.isZero, style: context.text.titleMedium),
+          MoneyText(
+            balance.abs(),
+            style: context.text.titleMedium?.copyWith(
+              color: context.palette.forSign(balance.minorUnits, neutral: context.colors.onSurface),
+            ),
+          ),
           PopupMenuButton<String>(
             tooltip: 'Member options',
             icon: const Icon(Icons.more_vert_rounded, size: 20),

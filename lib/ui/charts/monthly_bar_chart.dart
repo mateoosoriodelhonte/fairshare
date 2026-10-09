@@ -84,7 +84,7 @@ class MonthlyBarChart extends StatelessWidget {
                                       child: FittedBox(
                                         fit: BoxFit.scaleDown,
                                         child: Text(
-                                          Money(p.value, currency).format(),
+                                          _compact(Money(p.value, currency)),
                                           style: context.text.labelSmall?.tabular.copyWith(
                                             color: context.colors.onSurface,
                                           ),
@@ -127,6 +127,13 @@ class MonthlyBarChart extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Whole units once the amount is large enough that cents are noise in a
+/// narrow bar column (e.g. `€751` instead of `€751.37`).
+String _compact(Money m) {
+  if (m.currency.decimalDigits == 0 || m.minorUnits.abs() < 100 * m.currency.minorUnitsPerMajor) return m.format();
+  return Money(m.minorUnits - m.minorUnits % m.currency.minorUnitsPerMajor, m.currency).format().split('.').first;
 }
 
 class _DashedLinePainter extends CustomPainter {
