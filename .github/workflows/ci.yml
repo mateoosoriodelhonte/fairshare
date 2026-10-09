@@ -66,6 +66,25 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Run integration test on macOS desktop
+        run: flutter test integration_test/app_test.dart -d macos --timeout 5m
+
+      - name: Capture README screenshots
+        run: |
+          flutter test integration_test/screenshots_test.dart -d macos --timeout 5m
+          mkdir -p screenshots
+          dir=$(find "$HOME/Library/Containers" /tmp /var/folders -type d -name fairshare-screenshots 2>/dev/null | head -1)
+          echo "screenshots in: $dir"
+          cp "$dir"/*.png screenshots/
+          ls -la screenshots
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/*.png
+          if-no-files-found: error
+
       - name: Build release app
         run: flutter build macos --release
 
