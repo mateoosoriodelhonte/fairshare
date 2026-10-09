@@ -63,3 +63,17 @@ Future<void> tapTooltip(WidgetTester tester, String tooltip, {bool last = false}
 /// Finds the large page title rendered by [PageScaffold].
 Finder pageTitle(String text) =>
     find.descendant(of: find.byKey(const ValueKey('page-title')), matching: find.text(text));
+
+/// Creates a group through the UI and adds [memberNames]; leaves the app on
+/// the group screen.
+Future<void> createGroupWithMembers(WidgetTester tester, String name, List<String> memberNames) async {
+  await tapText(tester, 'New group', of: FilledButton);
+  await enterInto(tester, 'Name', name);
+  await tapText(tester, 'Create', of: FilledButton);
+  for (var i = 0; i < memberNames.length; i++) {
+    await tapText(tester, 'Add', of: TextButton);
+    await enterInto(tester, 'Name', memberNames[i]);
+    await tapText(tester, 'Add', of: FilledButton);
+  }
+  expect(pageTitle(name), findsOneWidget);
+}
