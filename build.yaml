@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # The manager API is unused; skipping it keeps the generated file small.
+          generate_manager: false

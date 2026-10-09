@@ -1,3 +1,4 @@
+export 'app_preferences.dart';
 export 'expense.dart';
 export 'expense_category.dart';
 export 'expense_share.dart';
