@@ -6,7 +6,9 @@ import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/money/money.dart';
 import '../../domain/group_snapshot.dart';
+import '../../domain/insights.dart';
 import '../../domain/models/models.dart';
+import '../../ui/charts/insights_panel.dart';
 import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
@@ -204,6 +206,13 @@ class _GroupBody extends ConsumerWidget {
               )
             else
               ExpenseList(snapshot: snapshot),
+            if (snapshot.expenses.isNotEmpty) ...[
+              const SectionHeader('Spending'),
+              InsightsPanel(
+                insights: SpendingInsights.compute([snapshot], currency: g.baseCurrency, now: DateTime.now()),
+                showStats: false,
+              ),
+            ],
           ],
         ),
       ],
