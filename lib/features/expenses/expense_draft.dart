@@ -116,6 +116,30 @@ class ExpenseDraft {
     );
   }
 
+  /// Edits a recurring template by treating it as an expense definition.
+  factory ExpenseDraft.fromTemplate({
+    required Group group,
+    required List<Member> members,
+    required RecurringTemplate template,
+  }) {
+    final asExpense = Expense(
+      id: template.id,
+      groupId: template.groupId,
+      description: template.description,
+      amount: template.amount,
+      paidByMemberId: template.paidByMemberId,
+      category: template.category,
+      date: template.nextDueDate,
+      splitType: template.splitType,
+      shares: template.shares,
+      conversionRate: template.conversionRate,
+      notes: template.notes,
+      createdAt: template.createdAt,
+      updatedAt: template.createdAt,
+    );
+    return ExpenseDraft.edit(group: group, members: members, expense: asExpense);
+  }
+
   final Group group;
   final List<Member> members;
   final Expense? existing;

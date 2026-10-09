@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/expenses/expense_editor_screen.dart';
 import '../features/groups/group_screen.dart';
+import '../features/recurring/recurring_screen.dart';
+import '../features/recurring/template_editor_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/settlements/settle_screen.dart';
 import '../ui/shell/app_shell.dart';
@@ -17,6 +19,9 @@ class Routes {
   static const settings = '/settings';
   static String group(String id) => '/groups/$id';
   static String settle(String groupId) => '/groups/$groupId/settle';
+  static String recurring(String groupId) => '/groups/$groupId/recurring';
+  static String newTemplate(String groupId) => '/groups/$groupId/recurring/new';
+  static String template(String groupId, String templateId) => '/groups/$groupId/recurring/$templateId';
   static String newExpense(String groupId) => '/groups/$groupId/expenses/new';
   static String expense(String groupId, String expenseId) => '/groups/$groupId/expenses/$expenseId';
 }
@@ -47,7 +52,34 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
             routes: [
               GoRoute(
+                path: 'recurring',
+                pageBuilder: (context, state) => _ShellPage(
+                  key: state.pageKey,
+                  child: RecurringScreen(groupId: state.pathParameters['groupId']!),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'new',
+                    pageBuilder: (context, state) => _ShellPage(
+                      key: state.pageKey,
+                      child: TemplateEditorScreen(groupId: state.pathParameters['groupId']!),
+                    ),
+                  ),
+                  GoRoute(
+                    path: ':templateId',
+                    pageBuilder: (context, state) => _ShellPage(
+                      key: state.pageKey,
+                      child: TemplateEditorScreen(
+                        groupId: state.pathParameters['groupId']!,
+                        templateId: state.pathParameters['templateId'],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              GoRoute(
                 path: 'settle',
+
                 pageBuilder: (context, state) => _ShellPage(
                   key: state.pageKey,
                   child: SettleScreen(groupId: state.pathParameters['groupId']!),
