@@ -6,6 +6,7 @@ import '../../app/providers.dart';
 import '../../domain/accounting/accounting.dart';
 import '../../domain/group_snapshot.dart';
 import '../../domain/models/models.dart';
+import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
 import 'balance_bars.dart';
@@ -56,11 +57,19 @@ class _SettleBody extends ConsumerWidget {
       title: 'Settle up',
       subtitle: snapshot.group.name,
       actions: [
-        FilledButton.tonalIcon(
-          onPressed: snapshot.members.length < 2 ? null : () => showSettlementSheet(context, snapshot),
-          icon: const Icon(Icons.add_rounded, size: 18),
-          label: const Text('Record payment'),
-        ),
+        // A wide labelled button would overlap the back button on phones.
+        if (context.isCompact)
+          IconButton(
+            tooltip: 'Record payment',
+            icon: const Icon(Icons.add_rounded),
+            onPressed: snapshot.members.length < 2 ? null : () => showSettlementSheet(context, snapshot),
+          )
+        else
+          FilledButton.tonalIcon(
+            onPressed: snapshot.members.length < 2 ? null : () => showSettlementSheet(context, snapshot),
+            icon: const Icon(Icons.add_rounded, size: 18),
+            label: const Text('Record payment'),
+          ),
       ],
       slivers: [
         SliverBox(
@@ -131,17 +140,21 @@ class _SettleBody extends ConsumerWidget {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              MoneyText(s.amount, style: context.text.titleMedium),
-                              if (s.amount.currency != snapshot.group.baseCurrency)
-                                Text(
-                                  '≈ ${BalanceCalculator.convertSettlement(s, snapshot.group.baseCurrency).format()}',
-                                  style: context.text.bodySmall?.tabular,
-                                ),
-                            ],
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerRight,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                MoneyText(s.amount, style: context.text.titleMedium),
+                                if (s.amount.currency != snapshot.group.baseCurrency)
+                                  Text(
+                                    '≈ ${BalanceCalculator.convertSettlement(s, snapshot.group.baseCurrency).format()}',
+                                    style: context.text.bodySmall?.tabular,
+                                  ),
+                              ],
+                            ),
                           ),
                           PopupMenuButton<String>(
                             tooltip: 'Payment options',

@@ -33,7 +33,9 @@ Future<void> disposeApp(WidgetTester tester) async {
 /// text field keeps scheduling frames and it never settles.
 Future<void> settle(WidgetTester tester) async {
   await tester.pump();
-  for (var i = 0; i < 6; i++) {
+  // Longer than any route transition (FadeForwards is 800ms on Android, the
+  // test platform), so a popped page is fully gone before the next step.
+  for (var i = 0; i < 9; i++) {
     await tester.pump(const Duration(milliseconds: 120));
   }
 }
@@ -105,10 +107,22 @@ Future<void> revealIfNeeded(WidgetTester tester, Finder finder) async {
   await tester.pump();
 }
 
-/// Scrolls the page's main scroll view until [finder] is built and visible,
-/// for content in lazily built lists far below the fold.
-Future<void> scrollTo(WidgetTester tester, Finder finder) async {
-  final scrollable = find.descendant(of: find.byType(CustomScrollView), matching: find.byType(Scrollable)).first;
-  await tester.scrollUntilVisible(finder, 200, scrollable: scrollable);
+/// Scrolls the page's main scroll view until [finder] matches something,
+/// then centres the first match. Tolerates zero matches while scrolling and
+/// several matches once found, unlike `scrollUntilVisible`.
+Future<void> scrollTo(WidgetTester tester, Finder finder, {int maxScrolls = 60}) async {
+  final scrollables = find.descendant(of: find.byType(CustomScrollView), matching: find.byType(Scrollable));
+  if (finder.evaluate().isEmpty && scrollables.evaluate().isNotEmpty) {
+    tester.state<ScrollableState>(scrollables.last).position.jumpTo(0);
+    await tester.pump();
+  }
+  for (var i = 0; i < maxScrolls && finder.evaluate().isEmpty; i++) {
+    expect(scrollables, findsAtLeastNWidgets(1), reason: 'a page scroll view should be on screen');
+    await tester.drag(scrollables.last, const Offset(0, -220), warnIfMissed: false);
+    await tester.pump();
+  }
+  expect(finder, findsAtLeastNWidgets(1), reason: 'target should appear after scrolling');
+  await Scrollable.ensureVisible(finder.evaluate().first, alignment: 0.5);
   await tester.pump();
+  await tester.pump(const Duration(milliseconds: 120));
 }

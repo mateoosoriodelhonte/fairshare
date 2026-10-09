@@ -101,6 +101,7 @@ class _RecurringBody extends ConsumerWidget {
                   for (final t in snapshot.templates)
                     ListTile(
                       key: ValueKey('template-${t.id}'),
+                      isThreeLine: true,
                       onTap: () => context.navigateTo(Routes.template(g.id, t.id)),
                       leading: Container(
                         width: 40,

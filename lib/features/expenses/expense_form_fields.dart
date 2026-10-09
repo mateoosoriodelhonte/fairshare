@@ -359,54 +359,79 @@ class _ParticipantRow extends StatelessWidget {
       SplitType.shares => 'shares',
       SplitType.exact => currency.code,
     };
+    final checkbox = Checkbox(
+      key: ValueKey('split-include-$index'),
+      value: input.included,
+      onChanged: (v) => onIncludedChanged(v ?? false),
+      semanticLabel: 'Include $name',
+    );
+    final nameText = Text(
+      name,
+      style: context.text.bodyLarge?.copyWith(color: input.included ? null : muted),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+    final shareText = Text(
+      input.included ? (share == null ? '–' : Money(share!, currency).format()) : '',
+      textAlign: TextAlign.end,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: context.text.bodyLarge?.tabular.copyWith(color: share == null ? muted : null),
+    );
+    final inputField = suffix == null || !input.included
+        ? null
+        : TextField(
+            key: ValueKey('split-input-$index'),
+            controller: controller,
+            textAlign: TextAlign.end,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
+            style: context.text.bodyLarge?.tabular,
+            decoration: InputDecoration(
+              isDense: true,
+              suffixText: suffix,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            ),
+          );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: FsSpace.md, vertical: FsSpace.xs),
-      child: Row(
-        children: [
-          Checkbox(
-            key: ValueKey('split-include-$index'),
-            value: input.included,
-            onChanged: (v) => onIncludedChanged(v ?? false),
-            semanticLabel: 'Include $name',
-          ),
-          if (member != null) MemberAvatar(member: member!, size: 30),
-          const SizedBox(width: FsSpace.sm),
-          Expanded(
-            child: Text(
-              name,
-              style: context.text.bodyLarge?.copyWith(color: input.included ? null : muted),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (suffix != null && input.included) ...[
-            SizedBox(
-              width: 112,
-              child: TextField(
-                key: ValueKey('split-input-$index'),
-                controller: controller,
-                textAlign: TextAlign.end,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
-                style: context.text.bodyLarge?.tabular,
-                decoration: InputDecoration(
-                  isDense: true,
-                  suffixText: suffix,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final narrow = constraints.maxWidth < 420;
+          if (narrow) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    checkbox,
+                    if (member != null) MemberAvatar(member: member!, size: 30),
+                    const SizedBox(width: FsSpace.sm),
+                    Expanded(child: nameText),
+                    const SizedBox(width: FsSpace.sm),
+                    Flexible(child: shareText),
+                  ],
                 ),
-              ),
-            ),
-            const SizedBox(width: FsSpace.md),
-          ],
-          SizedBox(
-            width: 96,
-            child: Text(
-              input.included ? (share == null ? '–' : Money(share!, currency).format()) : '',
-              textAlign: TextAlign.end,
-              style: context.text.bodyLarge?.tabular.copyWith(color: share == null ? muted : null),
-            ),
-          ),
-        ],
+                if (inputField != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 48, bottom: FsSpace.sm),
+                    child: inputField,
+                  ),
+              ],
+            );
+          }
+          return Row(
+            children: [
+              checkbox,
+              if (member != null) MemberAvatar(member: member!, size: 30),
+              const SizedBox(width: FsSpace.sm),
+              Expanded(child: nameText),
+              if (inputField != null) ...[SizedBox(width: 112, child: inputField), const SizedBox(width: FsSpace.md)],
+              SizedBox(width: 96, child: shareText),
+            ],
+          );
+        },
       ),
     );
   }

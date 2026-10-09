@@ -24,37 +24,41 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    // Scrollable so large text never overflows a height-constrained slot.
     return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 360),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: compact ? FsSpace.xl : FsSpace.xxxl, horizontal: FsSpace.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: compact ? 52 : 72,
-                height: compact ? 52 : 72,
-                decoration: BoxDecoration(
-                  color: colors.primaryContainer.withValues(alpha: 0.6),
-                  shape: BoxShape.circle,
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: compact ? FsSpace.xl : FsSpace.xxxl, horizontal: FsSpace.xl),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: compact ? 52 : 72,
+                  height: compact ? 52 : 72,
+                  decoration: BoxDecoration(
+                    color: colors.primaryContainer.withValues(alpha: 0.6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: compact ? 24 : 32, color: colors.primary),
                 ),
-                child: Icon(icon, size: compact ? 24 : 32, color: colors.primary),
-              ),
-              SizedBox(height: compact ? FsSpace.lg : FsSpace.xl),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: compact ? context.text.titleMedium : context.text.headlineSmall,
-              ),
-              const SizedBox(height: FsSpace.sm),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: context.text.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
-              ),
-              if (action != null) ...[const SizedBox(height: FsSpace.xl), action!],
-            ],
+                SizedBox(height: compact ? FsSpace.lg : FsSpace.xl),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: compact ? context.text.titleMedium : context.text.headlineSmall,
+                ),
+                const SizedBox(height: FsSpace.sm),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: context.text.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+                ),
+                if (action != null) ...[const SizedBox(height: FsSpace.xl), action!],
+              ],
+            ),
           ),
         ),
       ),
