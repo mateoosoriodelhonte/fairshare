@@ -80,6 +80,7 @@ class Expense {
     String? notes,
     bool clearNotes = false,
     String? recurringTemplateId,
+    bool clearRecurringTemplateId = false,
     DateTime? updatedAt,
   }) => Expense(
     id: id,
@@ -93,7 +94,7 @@ class Expense {
     shares: shares ?? this.shares,
     conversionRate: clearConversionRate ? null : (conversionRate ?? this.conversionRate),
     notes: clearNotes ? null : (notes ?? this.notes),
-    recurringTemplateId: recurringTemplateId ?? this.recurringTemplateId,
+    recurringTemplateId: clearRecurringTemplateId ? null : (recurringTemplateId ?? this.recurringTemplateId),
     createdAt: createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );

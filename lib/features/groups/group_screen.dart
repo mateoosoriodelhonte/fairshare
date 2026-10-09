@@ -11,6 +11,7 @@ import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../expenses/expense_list.dart';
+import '../io/export_import.dart';
 import 'group_editor_sheet.dart';
 import 'member_sheets.dart';
 
@@ -93,6 +94,14 @@ class _GroupBody extends ConsumerWidget {
             switch (value) {
               case 'edit':
                 await showGroupEditor(context, existing: g, canChangeCurrency: snapshot.isEmpty);
+              case 'export-json':
+                await exportGroupJson(context, ref, snapshot);
+              case 'export-expenses':
+                await exportGroupCsv(context, ref, snapshot, CsvReport.expenses);
+              case 'export-balances':
+                await exportGroupCsv(context, ref, snapshot, CsvReport.balances);
+              case 'export-settlements':
+                await exportGroupCsv(context, ref, snapshot, CsvReport.settlements);
               case 'delete':
                 final ok = await confirmDestructive(
                   context,
@@ -110,6 +119,24 @@ class _GroupBody extends ConsumerWidget {
               value: 'edit',
               child: ListTile(leading: Icon(Icons.edit_outlined), title: Text('Edit group')),
             ),
+            PopupMenuDivider(),
+            PopupMenuItem(
+              value: 'export-json',
+              child: ListTile(leading: Icon(Icons.ios_share_rounded), title: Text('Export group (JSON)')),
+            ),
+            PopupMenuItem(
+              value: 'export-expenses',
+              child: ListTile(leading: Icon(Icons.table_chart_outlined), title: Text('Export expenses (CSV)')),
+            ),
+            PopupMenuItem(
+              value: 'export-balances',
+              child: ListTile(leading: Icon(Icons.balance_rounded), title: Text('Export balances (CSV)')),
+            ),
+            PopupMenuItem(
+              value: 'export-settlements',
+              child: ListTile(leading: Icon(Icons.swap_horiz_rounded), title: Text('Export payments (CSV)')),
+            ),
+            PopupMenuDivider(),
             PopupMenuItem(
               value: 'delete',
               child: ListTile(leading: Icon(Icons.delete_outline_rounded), title: Text('Delete group')),

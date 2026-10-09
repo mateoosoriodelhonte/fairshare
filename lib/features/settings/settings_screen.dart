@@ -6,6 +6,7 @@ import '../../domain/models/models.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../groups/group_editor_sheet.dart';
+import '../io/export_import.dart';
 
 const String appVersion = '1.0.0';
 
@@ -90,6 +91,27 @@ class SettingsScreen extends ConsumerWidget {
                   onChanged: repo.setAutoGenerateRecurring,
                   title: const Text('Create due expenses on launch'),
                   subtitle: const Text('Templates that fall due are turned into ordinary expenses when the app opens.'),
+                ),
+              ],
+            ),
+            const SectionHeader('Your data'),
+            FsListCard(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.file_open_outlined),
+                  title: const Text('Import a group from JSON'),
+                  subtitle: const Text(
+                    'Creates a new group from a FairShare export. Existing groups are never changed.',
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => importGroupFromFile(context, ref),
+                ),
+                const ListTile(
+                  leading: Icon(Icons.lock_outline_rounded),
+                  title: Text('Everything stays on this device'),
+                  subtitle: Text(
+                    'FairShare has no accounts, no sync and no analytics. Exports are files you choose to save; nothing is uploaded.',
+                  ),
                 ),
               ],
             ),
