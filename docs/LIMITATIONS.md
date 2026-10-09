@@ -6,7 +6,7 @@ This document is deliberately blunt. If something is not listed as verified, ass
 
 | Platform | Status |
 | --- | --- |
-| macOS 13+ (Apple silicon and Intel) | Built and run in CI on GitHub's macOS runner; integration tests execute on the desktop target there. The release artifact is an **unsigned, ad-hoc-signed app bundle**: macOS will warn on first launch (right-click → Open, or remove the quarantine attribute). |
+| macOS 12+ (universal: Apple silicon and Intel) | Built and run in CI on GitHub's macOS runner; integration tests execute on the desktop target there. The release artifact is an **unsigned, ad-hoc-signed app bundle**: macOS will warn on first launch (right-click → Open, or remove the quarantine attribute). |
 | iOS | Platform folder is generated and the code contains nothing macOS-specific, but **no iOS build or device test has been performed**. |
 | Android | Same as iOS: untested. |
 | Windows, Linux, web | Not configured. The database layer (Drift with native SQLite) would need the web setup, and the UI has not been exercised there. |
