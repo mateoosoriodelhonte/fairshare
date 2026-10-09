@@ -27,7 +27,7 @@ void main() {
     expect(find.byType(ExpenseTile), findsOneWidget);
     expect(find.text(r'$100.00'), findsWidgets);
     // 100.00 split three ways: 33.34 / 33.33 / 33.33; Ana paid.
-    expect(find.text(r'$66.66'), findsOneWidget, reason: 'Ana is owed 100 - 33.34');
+    expect(find.text(r'$66.66'), findsNWidgets(2), reason: 'Ana is owed 100 - 33.34: member row and outstanding stat');
     expect(find.text(r'$33.33'), findsNWidgets(2), reason: 'Ben and Cleo each owe 33.33');
 
     await tapText(tester, 'Settle up', of: FilledButton);
