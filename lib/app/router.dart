@@ -6,6 +6,7 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/expenses/expense_editor_screen.dart';
 import '../features/groups/group_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/settlements/settle_screen.dart';
 import '../ui/shell/app_shell.dart';
 
 /// Route table. Paths are stable so deep links and tests can rely on them.
@@ -15,6 +16,7 @@ class Routes {
   static const dashboard = '/';
   static const settings = '/settings';
   static String group(String id) => '/groups/$id';
+  static String settle(String groupId) => '/groups/$groupId/settle';
   static String newExpense(String groupId) => '/groups/$groupId/expenses/new';
   static String expense(String groupId, String expenseId) => '/groups/$groupId/expenses/$expenseId';
 }
@@ -44,6 +46,13 @@ final routerProvider = Provider<GoRouter>((ref) {
               child: GroupScreen(groupId: state.pathParameters['groupId']!),
             ),
             routes: [
+              GoRoute(
+                path: 'settle',
+                pageBuilder: (context, state) => _ShellPage(
+                  key: state.pageKey,
+                  child: SettleScreen(groupId: state.pathParameters['groupId']!),
+                ),
+              ),
               GoRoute(
                 path: 'expenses/new',
                 pageBuilder: (context, state) => _ShellPage(
