@@ -3,14 +3,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../app/router.dart';
+import '../../core/money/currency.dart';
 import '../../core/money/money.dart';
 import '../../domain/group_snapshot.dart';
+import '../../domain/insights.dart';
+import '../../ui/charts/insights_panel.dart';
 import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../demo/demo_actions.dart';
 import '../groups/group_editor_sheet.dart';
 import '../io/export_import.dart';
+
+/// Currency whose insights are shown when groups use several.
+class InsightsCurrency extends Notifier<Currency?> {
+  @override
+  Currency? build() => null;
+
+  void select(Currency currency) => state = currency;
+}
+
+final insightsCurrencyProvider = NotifierProvider<InsightsCurrency, Currency?>(InsightsCurrency.new);
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -92,8 +105,34 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               );
             }
+            final currencies = SpendingInsights.currenciesIn(snapshots);
+            final selected = ref.watch(insightsCurrencyProvider);
+            final currency = currencies.contains(selected) ? selected! : (currencies.isEmpty ? null : currencies.first);
+            final insights = currency == null
+                ? null
+                : SpendingInsights.compute(snapshots, currency: currency, now: DateTime.now());
             return SliverBox(
               children: [
+                if (insights != null) ...[
+                  SectionHeader(
+                    'Insights',
+                    padding: const EdgeInsets.fromLTRB(FsSpace.xs, FsSpace.sm, FsSpace.xs, FsSpace.md),
+                    trailing: currencies.length > 1
+                        ? Wrap(
+                            spacing: FsSpace.xs,
+                            children: [
+                              for (final c in currencies)
+                                ChoiceChip(
+                                  label: Text(c.code),
+                                  selected: c == currency,
+                                  onSelected: (_) => ref.read(insightsCurrencyProvider.notifier).select(c),
+                                ),
+                            ],
+                          )
+                        : null,
+                  ),
+                  InsightsPanel(insights: insights),
+                ],
                 SectionHeader(
                   'Groups',
                   padding: const EdgeInsets.fromLTRB(FsSpace.xs, FsSpace.sm, FsSpace.xs, FsSpace.md),
