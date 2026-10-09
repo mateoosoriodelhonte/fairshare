@@ -5,6 +5,7 @@ import '../../app/providers.dart';
 import '../../domain/models/models.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
+import '../demo/demo_actions.dart';
 import '../groups/group_editor_sheet.dart';
 import '../io/export_import.dart';
 
@@ -105,6 +106,15 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () => importGroupFromFile(context, ref),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.auto_awesome_rounded),
+                  title: const Text('Create demo group'),
+                  subtitle: const Text(
+                    'A fictional flat share with synthetic expenses, every split type, a foreign-currency bill and recurring rent.',
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => createDemoGroup(context, ref),
                 ),
                 const ListTile(
                   leading: Icon(Icons.lock_outline_rounded),

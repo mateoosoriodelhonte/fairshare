@@ -23,7 +23,10 @@ class AppShell extends StatelessWidget {
         children: [
           Sidebar(collapsed: collapsed),
           VerticalDivider(width: 1, color: context.palette.hairline),
-          Expanded(child: ClipRect(child: child)),
+          // Snack bars belong to the content pane, not across the sidebar.
+          Expanded(
+            child: ScaffoldMessenger(child: ClipRect(child: child)),
+          ),
         ],
       ),
     );
