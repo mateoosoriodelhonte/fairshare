@@ -9,6 +9,7 @@ import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../groups/group_editor_sheet.dart';
+import '../io/export_import.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -60,10 +61,21 @@ class DashboardScreen extends ConsumerWidget {
                   title: 'Split your first expense',
                   message:
                       'Create a group for your flat, a trip, or just the two of you. Everything stays on this device.',
-                  action: FilledButton.icon(
-                    onPressed: () => showGroupEditor(context),
-                    icon: const Icon(Icons.add_rounded),
-                    label: const Text('New group'),
+                  action: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FilledButton.icon(
+                        onPressed: () => showGroupEditor(context),
+                        icon: const Icon(Icons.add_rounded),
+                        label: const Text('New group'),
+                      ),
+                      const SizedBox(height: FsSpace.sm),
+                      TextButton.icon(
+                        onPressed: () => importGroupFromFile(context, ref),
+                        icon: const Icon(Icons.file_open_outlined, size: 18),
+                        label: const Text('Import a group'),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -75,10 +87,21 @@ class DashboardScreen extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(FsSpace.xs, FsSpace.sm, FsSpace.xs, FsSpace.md),
                   trailing: compact
                       ? null
-                      : TextButton.icon(
-                          onPressed: () => showGroupEditor(context),
-                          icon: const Icon(Icons.add_rounded, size: 18),
-                          label: const Text('New group'),
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextButton.icon(
+                              onPressed: () => importGroupFromFile(context, ref),
+                              icon: const Icon(Icons.file_open_outlined, size: 18),
+                              label: const Text('Import'),
+                            ),
+                            const SizedBox(width: FsSpace.xs),
+                            TextButton.icon(
+                              onPressed: () => showGroupEditor(context),
+                              icon: const Icon(Icons.add_rounded, size: 18),
+                              label: const Text('New group'),
+                            ),
+                          ],
                         ),
                 ),
                 _GroupGrid(snapshots: snapshots),
