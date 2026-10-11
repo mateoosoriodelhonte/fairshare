@@ -2,6 +2,10 @@
 
 Thanks for your interest. FairShare is small and opinionated; the notes below keep it that way.
 
+## Stack
+
+Flutter 3.47 and Dart 3.13, Material 3, Riverpod 3, go_router, Drift on SQLite, and nothing that talks to a network. [docs/TECH_STACK.md](docs/TECH_STACK.md) lists every dependency with its version and the reason it is there.
+
 ## Setup
 
 ```bash
@@ -20,6 +24,10 @@ flutter run -d macos         # requires Xcode with the licence accepted
 * **Tests drive the real app.** Widget tests pump `FairShareApp` against an in-memory database (`test/support/app_harness.dart`). Avoid `pumpAndSettle`; use the harness helpers.
 * **Lints are strict** (`flutter analyze --fatal-infos`) and formatting is enforced at 120 columns (`dart format`).
 * **Privacy is a feature.** No network calls, no analytics, no background writes outside the app's own database.
+
+## Get credit for your work
+
+Commit with an email linked to your GitHub account (your no-reply address is simplest) so merged pull requests count on your profile. The details, a checklist and a troubleshooting table are in [docs/CONTRIBUTION_CREDIT.md](docs/CONTRIBUTION_CREDIT.md).
 
 ## Workflow
 

@@ -100,7 +100,7 @@ Full detail, including functional limits, is in [docs/LIMITATIONS.md](docs/LIMIT
 * Foreign-currency expenses are converted once on the total with a user-entered fixed-point rate (six decimals, half-up rounding) and then re-split in the base currency, so balances always conserve value.
 * Balances are exact accounting. Settlement suggestions are an optimisation layer on top and are labelled as such in the UI.
 
-Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the algorithms and their guarantees, and [docs/DATA_FORMAT.md](docs/DATA_FORMAT.md) for the export schema.
+Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the algorithms and their guarantees, [docs/TECH_STACK.md](docs/TECH_STACK.md) for every library, its version and why it was chosen, and [docs/DATA_FORMAT.md](docs/DATA_FORMAT.md) for the export schema.
 
 ## Testing
 
@@ -139,7 +139,7 @@ lib/features    dashboard, groups, expenses, settlements, recurring, settings, i
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pull requests are welcome; the V1 scope is tracked in the [V1 milestone](https://github.com/mateoosoriodelhonte/fairshare/milestone/1).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and workflow, and [docs/CONTRIBUTION_CREDIT.md](docs/CONTRIBUTION_CREDIT.md) for how merged work is credited on your GitHub profile. Issues and pull requests are welcome; the V1 scope is tracked in the [V1 milestone](https://github.com/mateoosoriodelhonte/fairshare/milestone/1).
 
 ## License
 
