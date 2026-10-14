@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -10,6 +11,7 @@ import '../../ui/shell/app_shell.dart';
 import '../../ui/theme/theme.dart';
 import '../../ui/widgets/widgets.dart';
 import 'balance_bars.dart';
+import 'settlement_plan_text.dart';
 import 'settlement_sheet.dart';
 
 class SettleScreen extends ConsumerWidget {
@@ -57,6 +59,16 @@ class _SettleBody extends ConsumerWidget {
       title: 'Settle up',
       subtitle: snapshot.group.name,
       actions: [
+        IconButton(
+          tooltip: 'Copy plan',
+          icon: const Icon(Icons.copy_rounded),
+          onPressed: settled
+              ? null
+              : () async {
+                  await Clipboard.setData(ClipboardData(text: settlementPlanText(snapshot, suggestions, mode)));
+                  if (context.mounted) showMessage(context, 'Plan copied. Paste it into your group chat.');
+                },
+        ),
         // A wide labelled button would overlap the back button on phones.
         if (context.isCompact)
           IconButton(
